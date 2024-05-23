@@ -1,8 +1,11 @@
+#import <Preferences/PSListController.h>
+#import <Preferences/PSSpecifier.h>
+#import <UIKit/UIKit.h>
 #import <notify.h>
 #import <Social/Social.h>
 #import <dlfcn.h>
 #import <sys/utsname.h>
-#import <prefs.h>
+#import "./prefs.h"
 
 #define NSLog(...)
 
@@ -14,6 +17,12 @@
 	UILabel* underLabel;
 }
 - (void)HeaderCell;
+@end
+
+@interface NSTask : NSObject
+@property(copy)NSArray* arguments;
+@property(copy)NSString* launchPath;
+- (void)launch;
 @end
 
 @implementation LowerInstallSettingsController
@@ -157,7 +166,10 @@
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     if (alertView.tag == 55 && buttonIndex == 1) {
-        system("killall backboardd SpringBoard");
+        NSTask *f = [[NSTask alloc] init];
+        [f setLaunchPath:@"/usr/bin/killall"];
+        [f setArguments:[NSArray arrayWithObjects:@"SpringBoard", nil]];
+        [f launch];
     }
 }
 - (id)readPreferenceValue:(PSSpecifier*)specifier
@@ -169,7 +181,7 @@
 }
 - (void)_returnKeyPressed:(id)arg1
 {
-	[super _returnKeyPressed:arg1];
+	//[super _returnKeyPressed:arg1];
 	[self.view endEditing:YES];
 }
 
@@ -201,7 +213,7 @@
 		[headerView addSubview:_label];
 		[headerView addSubview:underLabel];
 
-		[_table setTableHeaderView:headerView];
+		//[_table setTableHeaderView:headerView];
 		[NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(increaseAlpha) userInfo:nil repeats:NO];
 	}
 }
